@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Uploader</title>
+  <link rel="stylesheet" type="text/css" href="index.css">
+</head>
+<body>
+  <input type="file" id="fileInput" accept="image/*">
+  <button id="uploadBtn">Upload Image</button>
+  <div id="imageContainer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script>
+    document.getElementById('uploadBtn').addEventListener('click', function() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+
+      if (file) {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        axios.post('/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        .then(response => {
+          const imageUrl = response.data.imageUrl;
+          const imageContainer = document.getElementById('imageContainer');
+          const imgElement = document.createElement('img');
+          imgElement.src = imageUrl;
+          imageContainer.innerHTML = '';
+          imageContainer.appendChild(imgElement);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Failed to upload image');
+        });
+      } else {
+        alert('Please select an image to upload.');
+      }
+    });
+  </script>
+</body>
+</html>
